@@ -32,6 +32,7 @@
 	<script>
 		var div = document.querySelectorAll('div'),
 			myStep = true, // если true то мой ход
+			help = true, // AI on
 			combination = [0,0,0,
 						   0,0,0,
 						   0,0,0],
@@ -74,38 +75,20 @@
 		// console.log(res ? 'yes' : 'now'); // !! win or lose
 		// console.log(myStep); // !!
 
-		  	var idontknow = [ 
-			  	[/12/g, 3],
-			  	[/23/g, 1],
-			  	[/1.*3/g, 2],
-			  	[/45/g, 6],
-			  	[/56/g, 4],
-			  	[/4.*6/g, 5],
-			  	[/78/g, 9],
-			  	[/89/g, 7],
-			  	[/7.*9/g, 8],
-			  	[/1.*4/g, 7],
-			  	[/4.*7/g, 1],
-			  	[/1.*7/g, 4],
-			  	[/2.*5/g, 8],
-			  	[/5.*8/g, 2],
-			  	[/2.*8/g, 5],
-			  	[/3.*6/g, 9],
-			  	[/6.*9/g, 3],
-			  	[/3.*9/g, 6],
-			  	[/1.*5/g, 9],
-			  	[/5.*9/g, 1],
-			  	[/1.*9/g, 5],
-			  	[/3.*5/g, 7],
-			  	[/5.*7/g, 3],
-			  	[/3.*7/g, 5]
-		  	];
+			// AI магия :)
+		  	var ai = [ [/12/g, 3], [/23/g, 1], [/1.*3/g, 2], [/45/g, 6], [/56/g, 4], [/4.*6/g, 5], [/78/g, 9], [/89/g, 7], [/7.*9/g, 8], [/1.*4/g, 7], [/4.*7/g, 1], [/1.*7/g, 4], [/2.*5/g, 8], [/5.*8/g, 2], [/2.*8/g, 5], [/3.*6/g, 9], [/6.*9/g, 3], [/3.*9/g, 6], [/1.*5/g, 9], [/5.*9/g, 1], [/1.*9/g, 5], [/3.*5/g, 7], [/5.*7/g, 3], [/3.*7/g, 5] ];
 		  
-		  for (var i = 0; i < idontknow.length; i++) {
+		  for (var i = 0; i < ai.length; i++) {
 		  	var res = temp.join('').match(win);
-		  	if (temp.join('').match(idontknow[i][0])) {
-		  		// console.log(idontknow[i][1]);
-		  		div[idontknow[i][1] - 1].style.background = 'orange';
+		  	if (temp.join('').match(ai[i][0]) && div[ai[i][1] - 1].style.background != 'orange') {
+		  		div[ai[i][1] - 1].style.background = 'orange';
+
+		  		// !!! Не обновляется информация по заполненным полям
+		  		// !!! Компьютер не пытается выиграть
+		  		// !!! Компьютер может заполнить 2 поля
+		  		combination[ai[i][1]] = 2;
+		  		// help - если попал в этот цикл computerStep отменяется
+		  		help = false;
 		  	}
 		  }
   	}
@@ -113,15 +96,18 @@
   	function computerStep() {
   		// ? можно установить setTimeout на ход компьютера + 
   		// заблокировать мне доступ к ходу
-  		var computerArr = [];
-  		for(var i = 0; i < combination.length; i++) {
-  			// Добавляю варианты для хода компьютера
-  			if(combination[i] === 0 ) computerArr.push(i);
-  		}
+  		if (help) { 
+	  		var computerArr = [];
+	  		for(var i = 0; i < combination.length; i++) {
+	  			// Добавляю варианты для хода компьютера
+	  			if(combination[i] === 0 ) computerArr.push(i);
+	  		}
 
-  		var out = computerArr[Math.floor(Math.random()*computerArr.length)]; // Easy PC
-  		div[out].style.background = 'orange';
-  		combination[out] = 2;
+	  		var out = computerArr[Math.floor(Math.random()*computerArr.length)]; // Easy PC
+	  		div[out].style.background = 'orange';
+	  		combination[out] = 2;
+  		}
+  		help = true;
 
   	}
 
