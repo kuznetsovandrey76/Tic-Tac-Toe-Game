@@ -3,23 +3,11 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>test</title>
-	<style>
-		* {
-			box-sizing: border-box;
-		}
-		div {
-			width: 30px;
-			height: 30px;
-			border: 1px solid;
-			display: inline-block;
-			margin: 5px;
-			padding: 5px;
-			background: lightgreen;
-		}
-	</style>
+	<title>Tic Tac</title>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<section id='board'>	
 	<div></div>
 	<div></div>
 	<div></div><br>
@@ -29,89 +17,12 @@
 	<div></div>
 	<div></div>
 	<div></div>
-	<script>
-		var div = document.querySelectorAll('div'),
-			myStep = true, // если true то мой ход
-			help = true, // AI on
-			combination = [0,0,0,
-						   0,0,0,
-						   0,0,0],
-			local;
-		for (var i = 0; i < div.length; i++) {
-	    local = div[i];
-	    div[i].number = i;
-	    local.addEventListener('click', function() {
-	    	if (this.style.background == 'lightgreen' || this.style.background == '') { 
-	    		this.style.background = 'tomato';
-
-	    		// Когда выбираю ячейку, ей присваивается значение 1
-	    		combination[this.number] = 1;
-	    	} else { 
-				this.style.background = 'lightgreen';
-				combination[this.number] = 0;
-			}
-			// Запуск мозгов (в т.ч. проверки на выигрыш)
-			test(combination);
-			// Определяю очередность ходов
-			myStep ? myStep = false : myStep = true;
-			computerStep();
-
-			// console.log(combination);
-		});
-	}
-	// Выигрышные комбинации 
-	// .* - между цифрами стоит неопределенное количество других цифр 
-	var win = /123|456|789|1.*4.*7|2.*5.*8|3.*6.*9|1.*5.*9|3.*5.*7/g;
-
-  	function test(arr) {
-  		var temp = [];
-  		for (var i = 0; i < arr.length; i++) {
-  			// Добавляю в temp все выбранные мной ячейки 
-  			if (arr[i] === 1) temp.push(i + 1);
-  		}
-  		// temp.join('') - выводим все выбранные элементы
-		var res = temp.join('').match(win);
-		// Вывожу есть ли выигрышная комбинация, res - true или null 
-		// console.log(res ? 'yes' : 'now'); // !! win or lose
-		// console.log(myStep); // !!
-
-			// AI магия :)
-		  	var ai = [ [/12/g, 3], [/23/g, 1], [/1.*3/g, 2], [/45/g, 6], [/56/g, 4], [/4.*6/g, 5], [/78/g, 9], [/89/g, 7], [/7.*9/g, 8], [/1.*4/g, 7], [/4.*7/g, 1], [/1.*7/g, 4], [/2.*5/g, 8], [/5.*8/g, 2], [/2.*8/g, 5], [/3.*6/g, 9], [/6.*9/g, 3], [/3.*9/g, 6], [/1.*5/g, 9], [/5.*9/g, 1], [/1.*9/g, 5], [/3.*5/g, 7], [/5.*7/g, 3], [/3.*7/g, 5] ];
-		  
-		  for (var i = 0; i < ai.length; i++) {
-		  	var res = temp.join('').match(win);
-		  	if (temp.join('').match(ai[i][0]) && div[ai[i][1] - 1].style.background != 'orange') {
-		  		div[ai[i][1] - 1].style.background = 'orange';
-
-		  		// !!! Не обновляется информация по заполненным полям
-		  		// !!! Компьютер не пытается выиграть
-		  		// !!! Компьютер может заполнить 2 поля
-		  		combination[ai[i][1]] = 2;
-		  		// help - если попал в этот цикл computerStep отменяется
-		  		help = false;
-		  	}
-		  }
-  	}
-
-  	function computerStep() {
-  		// ? можно установить setTimeout на ход компьютера + 
-  		// заблокировать мне доступ к ходу
-  		if (help) { 
-	  		var computerArr = [];
-	  		for(var i = 0; i < combination.length; i++) {
-	  			// Добавляю варианты для хода компьютера
-	  			if(combination[i] === 0 ) computerArr.push(i);
-	  		}
-
-	  		var out = computerArr[Math.floor(Math.random()*computerArr.length)]; // Easy PC
-	  		div[out].style.background = 'orange';
-	  		combination[out] = 2;
-  		}
-  		help = true;
-
-  	}
-
-
-	</script>
+</section>
+<section id="choice">
+	<p>Ввыбери Крестик (тогда будешь ходить первым) или Нолик (вторым)</p>
+	<input type="submit" id='plus' value="+">
+	<input type="submit" id='zero' value="o">
+</section>
+	<script src='main.js'></script>
 </body>
 </html>
