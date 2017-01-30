@@ -3,24 +3,28 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 	<title>Tic Tac</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<section id='end'></section>
-<section id='board'>	
+<section id='end' class='end'>
+	<p id='p'></p>
+	<input type="submit" id='repeat' value="repeat">
+</section>
+<section id='board' class="board">	
 	<div></div>
 	<div></div>
-	<div></div><br>
 	<div></div>
 	<div></div>
-	<div></div><br>
+	<div></div>
+	<div></div>
 	<div></div>
 	<div></div>
 	<div></div>
 </section>
 <section id="choice">
-	<p>Ввыбери Крестик (тогда будешь ходить первым) или Нолик (вторым)</p>
+	<p>Выбери Крестик (тогда будешь ходить первым) или Нолик (вторым)</p>
 	<input type="submit" id='plus' value="+">
 	<input type="submit" id='zero' value="o">
 </section>

@@ -1,20 +1,31 @@
 * {
 	box-sizing: border-box;
 }
+.board {
+	width: 160px;
+	background: khaki;
+}
 div {
-	width: 30px;
-	height: 30px;
+	text-align: center;
+	width: 40px;
+	font-family: 'Raleway', sans-serif;
+	height: 40px;
 	border: 1px solid;
-	display: inline-block;
+	display: inline-table;
 	margin: 5px;
 	padding: 5px;
-	background: lightgreen;
 	cursor: pointer;
+	
+	/* Чтобы блок не «выпадал» на новую строку */
+	vertical-align:top;
 }
-#end {
-	width: 130px;
-	height: 130px;
-	background: rgba(100,100,100,.5);
+.end {
+	width: 160px;
+	text-align: center;
+	height: 160px;
+	background: rgba(200,100,100,.4);
 	position: absolute;
 	display: none;
+	color: white;
 }
+

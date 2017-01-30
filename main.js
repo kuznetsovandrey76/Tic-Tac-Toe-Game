@@ -1,8 +1,25 @@
+var cell = document.querySelectorAll('div'),
+	// если true то мой ход
+	queue = true, 
+	// AI включен, подобие интеллекта
+	help = true,   
+	pcWin = false,
+	// Записываю куда сделаны ходы
+	// 0 - свободное поле
+	// 1 - мой ход
+	// 2 - ход ПК
+	combination = [	0,0,0,
+					0,0,0,
+					0,0,0 ],
+	event;
+// Определение того кто выиграл
 var you = false,
 	pc = false;
-
-
-
+// Подсчет количества сделанных ходов
+var stepCount = 0;	
+// Выигрышные комбинации 
+// .* - между цифрами стоит неопределенное количество других цифр 
+var win = /123|456|789|1.*4.*7|2.*5.*8|3.*6.*9|1.*5.*9|3.*5.*7/g;
 
 // Пока не выбрал каким хожу на экране ничего нет
 board.style.display = 'none';
@@ -12,56 +29,41 @@ plus.addEventListener('click', function() {
 	board.style.display = 'block';
 	choice.style.display = 'none';
 });
-
 // zero - хожу вторым
 zero.addEventListener('click', function() {
 	board.style.display = 'block';
 	choice.style.display = 'none';
-	// здесь запуск первого хода ПК
-
-	// Задержка хода компьютера
-	setTimeout(computerStep, 500);
+	// Запуск первого хода ПК с задержкой
+	setTimeout(computerStep, 100);
 });
 
-var cell = document.querySelectorAll('div'),
-	queue = true, // если true то мой ход
-	help = true, // AI включен, подобие интеллекта  
-	pcWin = false,
-	combination = [	0,0,0,
-					0,0,0,
-					0,0,0 ],
-	event;
 
 for (var i = 0; i < cell.length; i++) {
 	event = cell[i];
 	cell[i].number = i;
 	event.addEventListener('click', function() {
-		if (this.style.background == 'lightgreen' || this.style.background == '') { 
-			this.style.background = 'tomato';
-
+		if (this.innerHTML == '') { 
+			this.innerHTML = 'x';
 			// Когда выбираю ячейку, ей присваивается значение 1
 			combination[this.number] = 1;
-		} else { 
-			this.style.background = 'lightgreen';
-			combination[this.number] = 0;
-		}
-		// Запуск мозгов (в т.ч. проверки на выигрыш)
-		myStep(combination);
-		// Определяю очередность ходов
-		queue ? queue = false : queue = true;
-		computerStep();
-		// # -> Здесь заканчивается общий ход
-		// console.log(combination);
-		if(you || pc) {
-			setTimeout(restart, 100); 
+
+			// Запуск мозгов (в т.ч. проверки на выигрыш)
+			myStep(combination);
+			// Определяю очередность ходов
+			queue ? queue = false : queue = true;
+			computerStep();
+
+			// Прекращаем кон
+			// или все поля заполнены
+			if(you || pc || stepCount > 8) {
+				setTimeout(restart, 100); 
+			} 			
 		} 
 	});
 }
-// Выигрышные комбинации 
-// .* - между цифрами стоит неопределенное количество других цифр 
-var win = /123|456|789|1.*4.*7|2.*5.*8|3.*6.*9|1.*5.*9|3.*5.*7/g;
 
 function myStep(arr) {
+	stepCount++;
 	// myTEMP - здесь мои ходы (1-9)
 	var myTEMP = [];
 	var pcTEMP = [];
@@ -70,7 +72,6 @@ function myStep(arr) {
 		if (arr[i] === 1) myTEMP.push(i + 1);
 	}
 	for (var i = 0; i < arr.length; i++) {
-		// Добавляю в myTEMP все выбранные мной ячейки 
 		if (arr[i] === 2) pcTEMP.push(i + 1);
 	}
 
@@ -85,10 +86,8 @@ function myStep(arr) {
 	
 	// console.log(res ? 'I - YES' : 'I - now'); 
 	// console.log(resPC ? 'PC - YES' : 'PC - now'); 
-	// console.log(queue); // !!
 	// console.log(myTEMP.join(''));
 	// console.log(pcTEMP.join('') + ' - PC');
-	// console.log(win);
 
 	// AI магия :)
 	// Предвыигрышные комбинации
@@ -96,10 +95,11 @@ function myStep(arr) {
 
 	// Предвыигрышная компинация ПК
 	for (var i = 0; i < ai.length; i++) {
-		if (pcTEMP.join('').match(ai[i][0]) && cell[ai[i][1] - 1].style.background != 'tomato') {
+		if (pcTEMP.join('').match(ai[i][0]) && cell[ai[i][1] - 1].innerHTML != 'x') {
 			help = false;
 			if (!you) { 
-				cell[ai[i][1] - 1].style.background = 'orange';
+				stepCount++;
+				cell[ai[i][1] - 1].innerHTML = 'o';
 			}
 			pcWin = true;
 			combination[ai[i][1] - 1] = 2;
@@ -110,10 +110,13 @@ function myStep(arr) {
 
 	if (!pcWin) { 
 		for (var i = 0; i < ai.length; i++) {
-			// МОЯ предвыигрышная комбинация && Ячейка указанная вторым аргументом не оранжевая
-			if (myTEMP.join('').match(ai[i][0]) && cell[ai[i][1] - 1].style.background != 'orange' && cell[ai[i][1] - 1].style.background != 'tomato') {
+			// МОЯ предвыигрышная комбинация 
+			if (myTEMP.join('').match(ai[i][0]) && cell[ai[i][1] - 1].innerHTML != 'o' && cell[ai[i][1] - 1].innerHTML != 'x') {
 				help = false;
-				cell[ai[i][1] - 1].style.background = 'orange';
+				if (!you) { 
+					stepCount++;
+					cell[ai[i][1] - 1].innerHTML = 'o';
+				}
 				combination[ai[i][1] - 1] = 2;
 				// help - если попал в этот цикл computerStep отменяется
 				// Прерываю цикл, чтоб не допустить двух ходов ПК 
@@ -125,13 +128,16 @@ function myStep(arr) {
 
 function computerStep() {
 	if (help) { 
+		stepCount++;
 		var computerArr = [];
 		for(var i = 0; i < combination.length; i++) {
 			// Добавляю варианты для хода компьютера
 			if(combination[i] === 0 ) computerArr.push(i);
 		}
 		var out = computerArr[Math.floor(Math.random() * computerArr.length)]; // Easy PC
-		cell[out].style.background = 'orange';
+		if (stepCount < 10) { 
+			cell[out].innerHTML = 'o';
+		}
 		combination[out] = 2;
 	}
 	help = true;
@@ -153,4 +159,31 @@ function restart() {
 	// Отсюда переход на стартовый экран
 	end.style.display = 'block';
 
+	if (you) {  
+		p.innerHTML = 'YOU win';
+	} else if (pc){
+		p.innerHTML = 'PC win';		
+	} else {
+		p.innerHTML = 'draw';	
+	}
 }
+
+// Сброс всего при перезапуске
+repeat.addEventListener('click', function() {
+	board.style.display = 'none';
+	end.style.display = 'none';
+	choice.style.display = 'block';
+
+	you = false;
+	pc = false;
+	queue = true; 
+	help = true; 
+	pcWin = false;
+	combination = [	0,0,0,0,0,0,0,0,0 ],
+	stepCount = 0;
+
+	cell.forEach( function(element) {
+		element.innerHTML = '';
+	});
+
+});
